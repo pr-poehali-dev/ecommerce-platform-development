@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 
 const DesignSection = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('templates');
   const [showArchive, setShowArchive] = useState(false);
 
@@ -50,7 +52,7 @@ const DesignSection = () => {
           <p className="text-slate-600">Выбор и настройка дизайна магазина</p>
         </div>
         <Button 
-          onClick={() => window.open('#visual-editor', '_blank')}
+          onClick={() => navigate('/visual-editor')}
           className="flex items-center gap-2"
         >
           <Icon name="Edit" size={18} />
