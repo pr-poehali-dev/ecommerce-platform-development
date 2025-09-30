@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
+import BlockLibrary from './BlockLibrary';
+import { useState } from 'react';
 
 interface Block {
   id: string;
@@ -15,9 +17,11 @@ interface LeftSidebarProps {
   onPanelChange: (panel: 'blocks' | 'styles') => void;
   blocks: Block[];
   onAddBlock: (blockId: string) => void;
+  onShowZeroEditor?: () => void;
 }
 
-const LeftSidebar = ({ activePanel, onPanelChange, blocks, onAddBlock }: LeftSidebarProps) => {
+const LeftSidebar = ({ activePanel, onPanelChange, blocks, onAddBlock, onShowZeroEditor }: LeftSidebarProps) => {
+  const [useAdvancedLibrary, setUseAdvancedLibrary] = useState(true);
   return (
     <div className="w-80 bg-white border-r flex flex-col">
       <div className="border-b p-4">
@@ -43,8 +47,13 @@ const LeftSidebar = ({ activePanel, onPanelChange, blocks, onAddBlock }: LeftSid
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
-        {activePanel === 'blocks' && (
+      <div className="flex-1 overflow-y-auto">
+        {activePanel === 'blocks' && useAdvancedLibrary ? (
+          <BlockLibrary 
+            onAddBlock={onAddBlock} 
+            onShowZeroEditor={onShowZeroEditor || (() => {})} 
+          />
+        ) : activePanel === 'blocks' && (
           <div className="space-y-6">
             <div>
               <h3 className="text-xs font-semibold text-slate-500 uppercase mb-3">Структура</h3>

@@ -4,6 +4,8 @@ import RightSidebar from './visual-editor/RightSidebar';
 import EditorDialogs from './visual-editor/EditorDialogs';
 import EditorToolbar from './visual-editor/EditorToolbar';
 import EditorCanvas from './visual-editor/EditorCanvas';
+import ProjectsManager from './visual-editor/ProjectsManager';
+import ZeroBlockEditor from './visual-editor/ZeroBlockEditor';
 import {
   blocks,
   savedTemplates,
@@ -14,11 +16,13 @@ import {
 } from './visual-editor/editorUtils';
 
 const VisualEditor = () => {
+  const [view, setView] = useState<'projects' | 'editor'>('projects');
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [activePanel, setActivePanel] = useState<'blocks' | 'styles'>('blocks');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showTemplatesDialog, setShowTemplatesDialog] = useState(false);
+  const [showZeroEditor, setShowZeroEditor] = useState(false);
   const [sections, setSections] = useState(initialSections);
 
   const addNewSection = (blockType: string) => {
@@ -28,6 +32,17 @@ const VisualEditor = () => {
       name: blocks.find(b => b.id === blockType)?.name || 'Новая секция',
       content: getDefaultContent(blockType),
       styles: getDefaultStyles(blockType)
+    };
+    setSections([...sections, newSection]);
+  };
+
+  const addZeroBlock = (html: string, css: string, js: string) => {
+    const newSection = {
+      id: `zero-${Date.now()}`,
+      type: 'zero',
+      name: 'Zero Block',
+      content: { html, css, js },
+      styles: {}
     };
     setSections([...sections, newSection]);
   };
@@ -83,6 +98,26 @@ const VisualEditor = () => {
     setShowTemplatesDialog(false);
   };
 
+  const handleOpenProject = (projectId: number) => {
+    console.log('Открытие проекта:', projectId);
+    setView('editor');
+  };
+
+  const handleCreateProject = () => {
+    console.log('Создание нового проекта');
+    setSections(initialSections);
+    setView('editor');
+  };
+
+  if (view === 'projects') {
+    return (
+      <ProjectsManager
+        onOpenProject={handleOpenProject}
+        onCreateProject={handleCreateProject}
+      />
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col bg-slate-100">
       <EditorToolbar
@@ -98,6 +133,7 @@ const VisualEditor = () => {
           onPanelChange={setActivePanel}
           blocks={blocks}
           onAddBlock={addNewSection}
+          onShowZeroEditor={() => setShowZeroEditor(true)}
         />
 
         <EditorCanvas
@@ -127,6 +163,13 @@ const VisualEditor = () => {
         onSaveTemplate={saveTemplate}
         onLoadTemplate={loadTemplate}
       />
+
+      {showZeroEditor && (
+        <ZeroBlockEditor
+          onClose={() => setShowZeroEditor(false)}
+          onSave={addZeroBlock}
+        />
+      )}
     </div>
   );
 };
