@@ -8,6 +8,10 @@ import DesignSection from '@/components/dashboard/DesignSection';
 import ShopSettings from '@/components/dashboard/ShopSettings';
 import ShopModule from '@/components/dashboard/ShopModule';
 import SalesAnalytics from '@/components/dashboard/SalesAnalytics';
+import ModulesManager from '@/components/dashboard/ModulesManager';
+import NewsModule from '@/components/dashboard/modules/NewsModule';
+import FormsModule from '@/components/dashboard/modules/FormsModule';
+import GalleryModule from '@/components/dashboard/modules/GalleryModule';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -66,6 +70,7 @@ const Dashboard = () => {
       title: 'Доп. модули',
       icon: 'Grid',
       items: [
+        { id: 'modules-all', label: 'Все модули', icon: 'Grid3x3' },
         { id: 'news', label: 'Лента новостей', icon: 'Newspaper' },
         { id: 'articles', label: 'Каталог статей', icon: 'BookOpen' },
         { id: 'search', label: 'Поиск', icon: 'Search' },
@@ -113,6 +118,14 @@ const Dashboard = () => {
         return <DesignSection />;
       case 'shop-settings':
         return <ShopSettings />;
+      case 'modules-all':
+        return <ModulesManager />;
+      case 'news':
+        return <NewsModule />;
+      case 'forms':
+        return <FormsModule />;
+      case 'gallery':
+        return <GalleryModule />;
       default:
         return <GeneralSettings />;
     }
