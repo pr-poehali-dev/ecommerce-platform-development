@@ -27,6 +27,7 @@ const VisualEditor = () => {
   const [showTemplatesDialog, setShowTemplatesDialog] = useState(false);
   const [showZeroEditor, setShowZeroEditor] = useState(false);
   const [sections, setSections] = useState(initialSections);
+  const [editingText, setEditingText] = useState<{sectionId: string; field: string} | null>(null);
 
   const addNewSection = (blockType: string) => {
     const newSection = {
@@ -87,6 +88,36 @@ const VisualEditor = () => {
       [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
       setSections(newSections);
     }
+  };
+
+  const updateSectionContent = (sectionId: string, field: string, value: any) => {
+    setSections(sections.map(section => {
+      if (section.id === sectionId) {
+        return {
+          ...section,
+          content: {
+            ...section.content,
+            [field]: value
+          }
+        };
+      }
+      return section;
+    }));
+  };
+
+  const updateSectionStyles = (sectionId: string, styles: any) => {
+    setSections(sections.map(section => {
+      if (section.id === sectionId) {
+        return {
+          ...section,
+          styles: {
+            ...section.styles,
+            ...styles
+          }
+        };
+      }
+      return section;
+    }));
   };
 
   const saveTemplate = (templateName: string) => {
@@ -169,6 +200,7 @@ const VisualEditor = () => {
           onMoveSection={moveSection}
           onDuplicateSection={duplicateSection}
           onDeleteSection={deleteSection}
+          onUpdateContent={updateSectionContent}
         />
 
         <RightSidebar
@@ -176,6 +208,8 @@ const VisualEditor = () => {
           sections={sections}
           onDuplicate={duplicateSection}
           onDelete={deleteSection}
+          onUpdateContent={updateSectionContent}
+          onUpdateStyles={updateSectionStyles}
         />
       </div>
 

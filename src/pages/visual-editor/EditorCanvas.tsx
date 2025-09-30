@@ -18,6 +18,7 @@ interface EditorCanvasProps {
   onMoveSection: (sectionId: string, direction: 'up' | 'down') => void;
   onDuplicateSection: (sectionId: string) => void;
   onDeleteSection: (sectionId: string) => void;
+  onUpdateContent: (sectionId: string, field: string, value: any) => void;
 }
 
 const EditorCanvas = ({
@@ -27,7 +28,8 @@ const EditorCanvas = ({
   onSelectElement,
   onMoveSection,
   onDuplicateSection,
-  onDeleteSection
+  onDeleteSection,
+  onUpdateContent
 }: EditorCanvasProps) => {
   return (
     <div className="flex-1 overflow-auto bg-slate-200 p-8">
@@ -41,6 +43,7 @@ const EditorCanvas = ({
               section={section}
               isSelected={selectedElement === section.id}
               onSelect={onSelectElement}
+              onUpdateContent={onUpdateContent}
             />
             {selectedElement === section.id && (
               <div className="absolute top-2 right-2 flex gap-1 bg-white rounded-lg shadow-lg p-1">

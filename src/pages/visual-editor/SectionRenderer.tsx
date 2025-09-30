@@ -1,12 +1,14 @@
 import Icon from '@/components/ui/icon';
+import EditableText from './EditableText';
 
 interface SectionRendererProps {
   section: any;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  onUpdateContent: (sectionId: string, field: string, value: any) => void;
 }
 
-const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps) => {
+const SectionRenderer = ({ section, isSelected, onSelect, onUpdateContent }: SectionRendererProps) => {
   const renderSection = () => {
     switch (section.type) {
       case 'header':
@@ -22,7 +24,12 @@ const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps
             }}
           >
             <div className="h-full flex items-center justify-between max-w-7xl mx-auto">
-              <div className="font-bold text-xl">{section.content.logo}</div>
+              <EditableText
+                value={section.content.logo}
+                onChange={(value) => onUpdateContent(section.id, 'logo', value)}
+                className="font-bold text-xl"
+                as="span"
+              />
               <nav className="hidden md:flex gap-6 text-sm">
                 {section.content.menu?.map((item: string, i: number) => (
                   <a key={i} href="#" className="hover:text-primary transition-colors">{item}</a>
@@ -30,7 +37,12 @@ const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps
               </nav>
               <div className="flex items-center gap-2">
                 <Icon name="Phone" size={16} />
-                <span className="text-sm">{section.content.phone}</span>
+                <EditableText
+                  value={section.content.phone}
+                  onChange={(value) => onUpdateContent(section.id, 'phone', value)}
+                  className="text-sm"
+                  as="span"
+                />
               </div>
             </div>
           </div>
@@ -54,10 +66,25 @@ const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps
               />
             )}
             <div className="relative max-w-7xl mx-auto px-8 py-24 flex flex-col items-center justify-center text-center">
-              <h1 className="text-5xl font-bold mb-4">{section.content.title}</h1>
-              <p className="text-xl mb-8 opacity-90">{section.content.subtitle}</p>
+              <EditableText
+                value={section.content.title}
+                onChange={(value) => onUpdateContent(section.id, 'title', value)}
+                className="text-5xl font-bold mb-4"
+                as="h1"
+              />
+              <EditableText
+                value={section.content.subtitle}
+                onChange={(value) => onUpdateContent(section.id, 'subtitle', value)}
+                className="text-xl mb-8 opacity-90"
+                as="p"
+              />
               <button className="px-8 py-3 bg-white text-primary rounded-lg font-semibold hover:shadow-lg transition-shadow">
-                {section.content.button}
+                <EditableText
+                  value={section.content.button}
+                  onChange={(value) => onUpdateContent(section.id, 'button', value)}
+                  className=""
+                  as="span"
+                />
               </button>
             </div>
           </div>
@@ -75,7 +102,12 @@ const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps
             }}
           >
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-12">{section.content.title}</h2>
+              <EditableText
+                value={section.content.title}
+                onChange={(value) => onUpdateContent(section.id, 'title', value)}
+                className="text-3xl font-bold text-center mb-12"
+                as="h2"
+              />
               <div className="grid md:grid-cols-3 gap-8">
                 {section.content.items?.map((item: any, i: number) => (
                   <div key={i} className="text-center">
@@ -103,7 +135,12 @@ const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps
             }}
           >
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-12">{section.content.title}</h2>
+              <EditableText
+                value={section.content.title}
+                onChange={(value) => onUpdateContent(section.id, 'title', value)}
+                className="text-3xl font-bold text-center mb-12"
+                as="h2"
+              />
               <div className="grid md:grid-cols-3 gap-6">
                 {section.content.products?.map((product: any, i: number) => (
                   <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -131,7 +168,12 @@ const SectionRenderer = ({ section, isSelected, onSelect }: SectionRendererProps
             }}
           >
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-12">{section.content.title}</h2>
+              <EditableText
+                value={section.content.title}
+                onChange={(value) => onUpdateContent(section.id, 'title', value)}
+                className="text-3xl font-bold text-center mb-12"
+                as="h2"
+              />
               <div className="grid md:grid-cols-3 gap-6">
                 {section.content.reviews?.map((review: any, i: number) => (
                   <div key={i} className="bg-slate-50 rounded-lg p-6">
