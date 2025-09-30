@@ -7,6 +7,7 @@ import ProductsSection from '@/components/dashboard/ProductsSection';
 import DesignSection from '@/components/dashboard/DesignSection';
 import ShopSettings from '@/components/dashboard/ShopSettings';
 import ShopModule from '@/components/dashboard/ShopModule';
+import SalesAnalytics from '@/components/dashboard/SalesAnalytics';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -31,6 +32,7 @@ const Dashboard = () => {
       icon: 'Home',
       items: [
         { id: 'general', label: 'Общие настройки', icon: 'Settings' },
+        { id: 'analytics', label: 'Аналитика продаж', icon: 'BarChart3' },
         { id: 'pages', label: 'Страницы сайта', icon: 'FileText' },
         { id: 'menu', label: 'Меню сайта', icon: 'Menu' },
         { id: 'files', label: 'Файлы', icon: 'Folder' }
@@ -99,6 +101,8 @@ const Dashboard = () => {
     switch (activeSection) {
       case 'general':
         return <GeneralSettings />;
+      case 'analytics':
+        return <SalesAnalytics />;
       case 'shop-module':
         return <ShopModule onNavigate={setActiveSection} />;
       case 'orders':
