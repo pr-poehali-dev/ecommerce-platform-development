@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import LeftSidebar from './visual-editor/LeftSidebar';
 import RightSidebar from './visual-editor/RightSidebar';
 import EditorDialogs from './visual-editor/EditorDialogs';
@@ -16,6 +17,7 @@ import {
 } from './visual-editor/editorUtils';
 
 const VisualEditor = () => {
+  const location = useLocation();
   const [view, setView] = useState<'projects' | 'editor'>('projects');
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
@@ -108,6 +110,15 @@ const VisualEditor = () => {
     setSections(initialSections);
     setView('editor');
   };
+
+  useEffect(() => {
+    const state = location.state as { templateId?: string; templateName?: string };
+    if (state?.templateId) {
+      console.log('Загрузка шаблона:', state.templateName);
+      setSections(initialSections);
+      setView('editor');
+    }
+  }, [location.state]);
 
   if (view === 'projects') {
     return (

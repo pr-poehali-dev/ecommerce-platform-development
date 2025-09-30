@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import TemplatesGallery from './TemplatesGallery';
 
 const DesignSection = () => {
   const navigate = useNavigate();
@@ -10,7 +11,8 @@ const DesignSection = () => {
   const [showArchive, setShowArchive] = useState(false);
 
   const tabs = [
-    { id: 'templates', label: 'Варианты оформления' },
+    { id: 'templates', label: 'Шаблоны сайтов' },
+    { id: 'customize', label: 'Варианты оформления' },
     { id: 'preloader', label: 'Прелоадер' }
   ];
 
@@ -79,8 +81,13 @@ const DesignSection = () => {
         </div>
       </div>
 
-      {/* Templates tab content */}
+      {/* Website Templates Gallery */}
       {activeTab === 'templates' && (
+        <TemplatesGallery />
+      )}
+
+      {/* Customize tab content */}
+      {activeTab === 'customize' && (
         <div>
           <Card className="mb-6">
             <CardContent className="p-6">
