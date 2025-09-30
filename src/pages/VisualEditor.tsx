@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
+import LeftSidebar from './visual-editor/LeftSidebar';
+import RightSidebar from './visual-editor/RightSidebar';
+import SectionRenderer from './visual-editor/SectionRenderer';
+import EditorDialogs from './visual-editor/EditorDialogs';
 
 const VisualEditor = () => {
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [activePanel, setActivePanel] = useState<'blocks' | 'styles' | 'templates'>('blocks');
+  const [activePanel, setActivePanel] = useState<'blocks' | 'styles'>('blocks');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showTemplatesDialog, setShowTemplatesDialog] = useState(false);
 
@@ -239,195 +239,6 @@ const VisualEditor = () => {
     }
   };
 
-  const renderSection = (section: any) => {
-    const isSelected = selectedElement === section.id;
-    
-    switch (section.type) {
-      case 'header':
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ 
-              background: section.styles.background, 
-              color: section.styles.textColor,
-              height: section.styles.height || '80px',
-              padding: '0 2rem'
-            }}
-          >
-            <div className="h-full flex items-center justify-between max-w-7xl mx-auto">
-              <div className="font-bold text-xl">{section.content.logo}</div>
-              <nav className="hidden md:flex gap-6 text-sm">
-                {section.content.menu?.map((item: string, i: number) => (
-                  <a key={i} href="#" className="hover:text-primary transition-colors">{item}</a>
-                ))}
-              </nav>
-              <div className="flex items-center gap-2">
-                <Icon name="Phone" size={16} />
-                <span className="text-sm">{section.content.phone}</span>
-              </div>
-            </div>
-          </div>
-        );
-        
-      case 'hero':
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all relative overflow-hidden ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ 
-              background: section.styles.background,
-              color: section.styles.textColor,
-              minHeight: section.styles.minHeight || '500px'
-            }}
-          >
-            {section.content.image && (
-              <div 
-                className="absolute inset-0 bg-cover bg-center opacity-20"
-                style={{ backgroundImage: `url(${section.content.image})` }}
-              />
-            )}
-            <div className="relative max-w-7xl mx-auto px-8 py-24 flex flex-col items-center justify-center text-center">
-              <h1 className="text-5xl font-bold mb-4">{section.content.title}</h1>
-              <p className="text-xl mb-8 opacity-90">{section.content.subtitle}</p>
-              <button className="px-8 py-3 bg-white text-primary rounded-lg font-semibold hover:shadow-lg transition-shadow">
-                {section.content.button}
-              </button>
-            </div>
-          </div>
-        );
-
-      case 'features':
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ 
-              background: section.styles.background,
-              color: section.styles.textColor,
-              padding: '4rem 2rem'
-            }}
-          >
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-12">{section.content.title}</h2>
-              <div className="grid md:grid-cols-3 gap-8">
-                {section.content.items?.map((item: any, i: number) => (
-                  <div key={i} className="text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Icon name={item.icon as any} size={32} className="text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-xl mb-2">{item.title}</h3>
-                    <p className="text-slate-600">{item.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-        
-      case 'products':
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ 
-              background: section.styles.background,
-              color: section.styles.textColor,
-              padding: '4rem 2rem'
-            }}
-          >
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-12">{section.content.title}</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {section.content.products?.map((product: any, i: number) => (
-                  <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
-                    <div className="p-4">
-                      <h3 className="font-semibold mb-2">{product.name}</h3>
-                      <p className="text-primary font-bold">{product.price}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'testimonials':
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ 
-              background: section.styles.background,
-              color: section.styles.textColor,
-              padding: '4rem 2rem'
-            }}
-          >
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-12">{section.content.title}</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                {section.content.reviews?.map((review: any, i: number) => (
-                  <div key={i} className="bg-slate-50 rounded-lg p-6">
-                    <div className="flex gap-1 mb-3">
-                      {[...Array(review.rating)].map((_, j) => (
-                        <Icon key={j} name="Star" size={16} className="text-yellow-500 fill-yellow-500" />
-                      ))}
-                    </div>
-                    <p className="text-slate-700 mb-4">"{review.text}"</p>
-                    <p className="font-semibold">{review.author}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'footer':
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ 
-              background: section.styles.background,
-              color: section.styles.textColor,
-              padding: '3rem 2rem'
-            }}
-          >
-            <div className="max-w-7xl mx-auto">
-              <div className="flex flex-wrap justify-between items-center gap-6">
-                <div className="text-sm opacity-80">{section.content.company}</div>
-                <div className="flex gap-6 text-sm">
-                  {section.content.links?.map((link: string, i: number) => (
-                    <a key={i} href="#" className="hover:text-primary transition-colors">{link}</a>
-                  ))}
-                </div>
-                <div className="flex gap-4">
-                  {section.content.social?.map((social: string, i: number) => (
-                    <a key={i} href="#" className="hover:text-primary transition-colors">
-                      <Icon name="Circle" size={20} />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-        
-      default:
-        return (
-          <div 
-            onClick={() => setSelectedElement(section.id)}
-            className={`cursor-pointer transition-all p-12 text-center ${isSelected ? 'ring-4 ring-primary' : 'hover:ring-2 hover:ring-blue-300'}`}
-            style={{ background: section.styles.background, color: section.styles.textColor }}
-          >
-            <Icon name="Layout" size={48} className="mx-auto mb-4 opacity-50" />
-            <p className="text-lg font-medium">{section.name}</p>
-          </div>
-        );
-    }
-  };
-
   return (
     <div className="h-screen flex flex-col bg-slate-100">
       {/* Top toolbar */}
@@ -486,152 +297,12 @@ const VisualEditor = () => {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar */}
-        <div className="w-80 bg-white border-r flex flex-col">
-          <div className="border-b p-4">
-            <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
-              <button
-                onClick={() => setActivePanel('blocks')}
-                className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                  activePanel === 'blocks' ? 'bg-white shadow-sm' : 'hover:bg-white/50'
-                }`}
-              >
-                <Icon name="Layout" size={16} className="inline mr-2" />
-                Блоки
-              </button>
-              <button
-                onClick={() => setActivePanel('styles')}
-                className={`flex-1 px-3 py-2 rounded text-sm font-medium transition-colors ${
-                  activePanel === 'styles' ? 'bg-white shadow-sm' : 'hover:bg-white/50'
-                }`}
-              >
-                <Icon name="Palette" size={16} className="inline mr-2" />
-                Стили
-              </button>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4">
-            {activePanel === 'blocks' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase mb-3">Структура</h3>
-                  <div className="space-y-2">
-                    {blocks.filter(b => b.category === 'structure').map(block => (
-                      <div
-                        key={block.id}
-                        onClick={() => addNewSection(block.id)}
-                        className="p-3 bg-slate-50 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors flex items-center gap-3"
-                      >
-                        <Icon name={block.icon as any} size={20} className="text-slate-600" />
-                        <span className="text-sm font-medium text-slate-800">{block.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase mb-3">Контент</h3>
-                  <div className="space-y-2">
-                    {blocks.filter(b => b.category === 'content').map(block => (
-                      <div
-                        key={block.id}
-                        onClick={() => addNewSection(block.id)}
-                        className="p-3 bg-slate-50 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors flex items-center gap-3"
-                      >
-                        <Icon name={block.icon as any} size={20} className="text-slate-600" />
-                        <span className="text-sm font-medium text-slate-800">{block.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase mb-3">Магазин</h3>
-                  <div className="space-y-2">
-                    {blocks.filter(b => b.category === 'shop').map(block => (
-                      <div
-                        key={block.id}
-                        onClick={() => addNewSection(block.id)}
-                        className="p-3 bg-slate-50 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors flex items-center gap-3"
-                      >
-                        <Icon name={block.icon as any} size={20} className="text-slate-600" />
-                        <span className="text-sm font-medium text-slate-800">{block.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activePanel === 'styles' && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-800 mb-4">Общие стили сайта</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-xs">Основной цвет</Label>
-                      <div className="flex gap-2">
-                        <input type="color" defaultValue="#667eea" className="w-12 h-10 rounded border cursor-pointer" />
-                        <Input type="text" defaultValue="#667eea" className="flex-1 text-sm" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs">Цвет текста</Label>
-                      <div className="flex gap-2">
-                        <input type="color" defaultValue="#1e293b" className="w-12 h-10 rounded border cursor-pointer" />
-                        <Input type="text" defaultValue="#1e293b" className="flex-1 text-sm" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs">Фон сайта</Label>
-                      <div className="flex gap-2">
-                        <input type="color" defaultValue="#ffffff" className="w-12 h-10 rounded border cursor-pointer" />
-                        <Input type="text" defaultValue="#ffffff" className="flex-1 text-sm" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs">Шрифт заголовков</Label>
-                      <select className="w-full border rounded-md px-3 py-2 text-sm">
-                        <option>Inter</option>
-                        <option>Roboto</option>
-                        <option>Montserrat</option>
-                        <option>Open Sans</option>
-                        <option>Lato</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs">Шрифт текста</Label>
-                      <select className="w-full border rounded-md px-3 py-2 text-sm">
-                        <option>Inter</option>
-                        <option>Roboto</option>
-                        <option>Open Sans</option>
-                        <option>Lato</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs">Скругление углов</Label>
-                      <Input type="range" min="0" max="20" defaultValue="8" className="w-full" />
-                      <div className="text-xs text-slate-500 text-right">8px</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <Button variant="outline" className="w-full" size="sm">
-                    <Icon name="RefreshCw" size={14} className="mr-2" />
-                    Сбросить к умолчаниям
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <LeftSidebar
+          activePanel={activePanel}
+          onPanelChange={setActivePanel}
+          blocks={blocks}
+          onAddBlock={addNewSection}
+        />
 
         {/* Center - Preview */}
         <div className="flex-1 overflow-auto bg-slate-200 p-8">
@@ -641,7 +312,11 @@ const VisualEditor = () => {
           >
             {sections.map((section, index) => (
               <div key={section.id} className="relative group">
-                {renderSection(section)}
+                <SectionRenderer
+                  section={section}
+                  isSelected={selectedElement === section.id}
+                  onSelect={setSelectedElement}
+                />
                 {selectedElement === section.id && (
                   <div className="absolute top-2 right-2 flex gap-1 bg-white rounded-lg shadow-lg p-1">
                     <Button 
@@ -686,243 +361,25 @@ const VisualEditor = () => {
           </div>
         </div>
 
-        {/* Right sidebar - Properties */}
-        <div className="w-80 bg-white border-l flex flex-col">
-          <div className="border-b p-4">
-            <h2 className="font-semibold text-slate-800">
-              {selectedElement ? sections.find(s => s.id === selectedElement)?.name : 'Выберите элемент'}
-            </h2>
-          </div>
-
-          {selectedElement ? (
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-6">
-                {/* Element specific settings */}
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-700 mb-3">Содержимое</h3>
-                  <div className="space-y-3">
-                    {sections.find(s => s.id === selectedElement)?.type === 'header' && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Логотип</Label>
-                          <Input 
-                            type="text" 
-                            defaultValue={sections.find(s => s.id === selectedElement)?.content.logo}
-                            className="text-sm"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Телефон</Label>
-                          <Input 
-                            type="text" 
-                            defaultValue={sections.find(s => s.id === selectedElement)?.content.phone}
-                            className="text-sm"
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {sections.find(s => s.id === selectedElement)?.type === 'hero' && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Заголовок</Label>
-                          <Input 
-                            type="text" 
-                            defaultValue={sections.find(s => s.id === selectedElement)?.content.title}
-                            className="text-sm"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Подзаголовок</Label>
-                          <Input 
-                            type="text" 
-                            defaultValue={sections.find(s => s.id === selectedElement)?.content.subtitle}
-                            className="text-sm"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Текст кнопки</Label>
-                          <Input 
-                            type="text" 
-                            defaultValue={sections.find(s => s.id === selectedElement)?.content.button}
-                            className="text-sm"
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {sections.find(s => s.id === selectedElement)?.type === 'features' && (
-                      <>
-                        <div className="space-y-1">
-                          <Label className="text-xs">Заголовок секции</Label>
-                          <Input 
-                            type="text" 
-                            defaultValue={sections.find(s => s.id === selectedElement)?.content.title}
-                            className="text-sm"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Style settings */}
-                <div className="border-t pt-4">
-                  <h3 className="text-sm font-semibold text-slate-700 mb-3">Стили</h3>
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <Label className="text-xs">Фон</Label>
-                      <div className="flex gap-2">
-                        <input 
-                          type="color" 
-                          defaultValue="#ffffff"
-                          className="w-10 h-8 rounded border cursor-pointer" 
-                        />
-                        <Input 
-                          type="text" 
-                          defaultValue={sections.find(s => s.id === selectedElement)?.styles.background}
-                          className="flex-1 text-sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <Label className="text-xs">Цвет текста</Label>
-                      <div className="flex gap-2">
-                        <input 
-                          type="color" 
-                          defaultValue={sections.find(s => s.id === selectedElement)?.styles.textColor}
-                          className="w-10 h-8 rounded border cursor-pointer" 
-                        />
-                        <Input 
-                          type="text" 
-                          defaultValue={sections.find(s => s.id === selectedElement)?.styles.textColor}
-                          className="flex-1 text-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="border-t pt-4 space-y-2">
-                  <Button 
-                    variant="outline" 
-                    className="w-full" 
-                    size="sm"
-                    onClick={() => duplicateSection(selectedElement)}
-                  >
-                    <Icon name="Copy" size={14} className="mr-2" />
-                    Дублировать секцию
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full text-red-600" 
-                    size="sm"
-                    onClick={() => deleteSection(selectedElement)}
-                  >
-                    <Icon name="Trash2" size={14} className="mr-2" />
-                    Удалить секцию
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center p-8 text-center">
-              <div className="text-slate-400">
-                <Icon name="MousePointerClick" size={48} className="mx-auto mb-4 opacity-50" />
-                <p className="text-sm">Кликните на элемент на странице, чтобы настроить его</p>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Right sidebar */}
+        <RightSidebar
+          selectedElement={selectedElement}
+          sections={sections}
+          onDuplicate={duplicateSection}
+          onDelete={deleteSection}
+        />
       </div>
 
-      {/* Save Dialog */}
-      {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-md">
-            <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4">Сохранить шаблон</h2>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Название шаблона</Label>
-                  <Input 
-                    id="template-name"
-                    placeholder="Например: Главная страница"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Описание (необязательно)</Label>
-                  <Textarea 
-                    placeholder="Краткое описание шаблона"
-                    rows={3}
-                  />
-                </div>
-                <div className="flex gap-2 pt-4">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => setShowSaveDialog(false)}
-                  >
-                    Отмена
-                  </Button>
-                  <Button 
-                    className="flex-1"
-                    onClick={() => {
-                      const input = document.getElementById('template-name') as HTMLInputElement;
-                      saveTemplate(input.value);
-                    }}
-                  >
-                    <Icon name="Save" size={16} className="mr-2" />
-                    Сохранить
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Templates Dialog */}
-      {showTemplatesDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-2xl max-h-[80vh] overflow-auto">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold">Мои шаблоны</h2>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setShowTemplatesDialog(false)}
-                >
-                  <Icon name="X" size={18} />
-                </Button>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                {savedTemplates.map(template => (
-                  <div 
-                    key={template.id}
-                    className="border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
-                    onClick={() => loadTemplate(template.id)}
-                  >
-                    <div className="text-4xl mb-3 text-center">{template.thumbnail}</div>
-                    <h3 className="font-semibold mb-2">{template.name}</h3>
-                    <div className="flex items-center justify-between text-sm text-slate-600">
-                      <span>{template.sections} секций</span>
-                      <span>{template.date}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg text-sm text-slate-700">
-                <Icon name="Info" size={16} className="inline mr-2 text-blue-500" />
-                Нажмите на шаблон, чтобы загрузить его в редактор
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Dialogs */}
+      <EditorDialogs
+        showSaveDialog={showSaveDialog}
+        showTemplatesDialog={showTemplatesDialog}
+        savedTemplates={savedTemplates}
+        onCloseSave={() => setShowSaveDialog(false)}
+        onCloseTemplates={() => setShowTemplatesDialog(false)}
+        onSaveTemplate={saveTemplate}
+        onLoadTemplate={loadTemplate}
+      />
     </div>
   );
 };
