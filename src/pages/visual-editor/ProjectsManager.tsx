@@ -268,5 +268,3 @@ const ProjectsManager = ({ onOpenProject, onCreateProject }: ProjectsManagerProp
 };
 
 export default ProjectsManager;
-
-export default ProjectsManager;
