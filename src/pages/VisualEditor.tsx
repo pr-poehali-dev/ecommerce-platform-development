@@ -15,6 +15,7 @@ import {
   getDefaultStyles,
   getPreviewWidth
 } from './visual-editor/editorUtils';
+import { ecommerceTemplate } from '@/data/templates/ecommerce-template';
 
 const VisualEditor = () => {
   const location = useLocation();
@@ -115,7 +116,20 @@ const VisualEditor = () => {
     const state = location.state as { templateId?: string; templateName?: string };
     if (state?.templateId) {
       console.log('Загрузка шаблона:', state.templateName);
-      setSections(initialSections);
+      
+      if (state.templateId === 'ecommerce-pro') {
+        const templateSections = ecommerceTemplate.sections.map(section => ({
+          id: section.id,
+          type: section.type,
+          name: section.name,
+          content: section.content,
+          styles: section.styles
+        }));
+        setSections(templateSections);
+      } else {
+        setSections(initialSections);
+      }
+      
       setView('editor');
     }
   }, [location.state]);

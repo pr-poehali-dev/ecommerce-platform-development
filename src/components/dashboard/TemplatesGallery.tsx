@@ -14,6 +14,14 @@ interface Template {
 
 const TEMPLATES: Template[] = [
   {
+    id: 'ecommerce-pro',
+    name: 'E-commerce Pro',
+    preview: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop',
+    isPopular: true,
+    isFree: true,
+    description: 'Готовый интернет-магазин: каталог, корзина, отзывы, подписка'
+  },
+  {
     id: 'clean',
     name: 'Clean',
     preview: '/templates/clean.jpg',
