@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
+import { projectStorage, Project as StoredProject } from '@/utils/projectStorage';
+import { useToast } from '@/hooks/use-toast';
 
 interface Project {
   id: number;
@@ -19,39 +21,56 @@ interface ProjectsManagerProps {
 }
 
 const ProjectsManager = ({ onOpenProject, onCreateProject }: ProjectsManagerProps) => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [projects, setProjects] = useState<StoredProject[]>([]);
 
-  const projects: Project[] = [
-    {
-      id: 1,
-      name: 'Магазин воздушных шаров',
-      thumbnail: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=300&fit=crop',
-      pages: 5,
-      updatedAt: '28.09.2024',
-      published: true
-    },
-    {
-      id: 2,
-      name: 'Лендинг услуг',
-      thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop',
-      pages: 1,
-      updatedAt: '25.09.2024',
-      published: true
-    },
-    {
-      id: 3,
-      name: 'Портфолио фотографа',
-      thumbnail: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=400&h=300&fit=crop',
-      pages: 8,
-      updatedAt: '20.09.2024',
-      published: false
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = () => {
+    const storedProjects = projectStorage.getAllProjects();
+    setProjects(storedProjects);
+  };
+
+  const handleDeleteProject = (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm('Удалить этот проект?')) {
+      projectStorage.deleteProject(projectId);
+      loadProjects();
+      toast({
+        title: 'Проект удалён',
+        description: 'Проект успешно удалён',
+      });
     }
-  ];
+  };
+
+  const handleDuplicateProject = (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const duplicated = projectStorage.duplicateProject(projectId);
+    if (duplicated) {
+      loadProjects();
+      toast({
+        title: 'Проект скопирован',
+        description: `Создана копия проекта`,
+      });
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  const getProjectIdNumber = (projectId: string): number => {
+    return parseInt(projectId.replace('project-', ''));
+  };
 
   const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
@@ -128,46 +147,50 @@ const ProjectsManager = ({ onOpenProject, onCreateProject }: ProjectsManagerProp
               <Card
                 key={project.id}
                 className="overflow-hidden cursor-pointer hover:shadow-xl transition-all group"
-                onClick={() => onOpenProject(project.id)}
+                onClick={() => onOpenProject(getProjectIdNumber(project.id))}
               >
-                <div className="relative h-48 bg-slate-200 overflow-hidden">
-                  <img
-                    src={project.thumbnail}
-                    alt={project.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
+                  {project.previewImage ? (
+                    <img
+                      src={project.previewImage}
+                      alt={project.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Icon name="Layout" size={64} className="text-primary/30" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="absolute bottom-4 left-4 right-4 flex gap-2">
                       <Button size="sm" className="flex-1" onClick={(e) => {
                         e.stopPropagation();
-                        onOpenProject(project.id);
+                        onOpenProject(getProjectIdNumber(project.id));
                       }}>
                         <Icon name="Edit" size={14} className="mr-1" />
                         Редактировать
                       </Button>
-                      <Button size="sm" variant="secondary" onClick={(e) => e.stopPropagation()}>
-                        <Icon name="Eye" size={14} />
+                      <Button size="sm" variant="secondary" onClick={(e) => handleDuplicateProject(project.id, e)}>
+                        <Icon name="Copy" size={14} />
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={(e) => handleDeleteProject(project.id, e)}>
+                        <Icon name="Trash2" size={14} />
                       </Button>
                     </div>
                   </div>
                 </div>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-slate-800 flex-1">{project.name}</h3>
-                    {project.published && (
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full flex-shrink-0 ml-2">
-                        Опубликован
-                      </span>
-                    )}
+                    <h3 className="font-semibold text-slate-800 flex-1 truncate">{project.name}</h3>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-slate-600">
                     <span className="flex items-center gap-1">
-                      <Icon name="FileText" size={14} />
-                      {project.pages} стр.
+                      <Icon name="Layers" size={14} />
+                      {project.sections.length} секций
                     </span>
                     <span className="flex items-center gap-1">
                       <Icon name="Clock" size={14} />
-                      {project.updatedAt}
+                      {formatDate(project.updatedAt)}
                     </span>
                   </div>
                 </CardContent>
@@ -182,43 +205,47 @@ const ProjectsManager = ({ onOpenProject, onCreateProject }: ProjectsManagerProp
                   <div
                     key={project.id}
                     className="p-4 hover:bg-slate-50 cursor-pointer transition-colors"
-                    onClick={() => onOpenProject(project.id)}
+                    onClick={() => onOpenProject(getProjectIdNumber(project.id))}
                   >
                     <div className="flex items-center gap-4">
-                      <img
-                        src={project.thumbnail}
-                        alt={project.name}
-                        className="w-24 h-16 object-cover rounded-lg"
-                      />
+                      <div className="w-24 h-16 bg-gradient-to-br from-primary/20 to-primary/5 rounded-lg overflow-hidden flex items-center justify-center">
+                        {project.previewImage ? (
+                          <img
+                            src={project.previewImage}
+                            alt={project.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Icon name="Layout" size={32} className="text-primary/30" />
+                        )}
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold text-slate-800">{project.name}</h3>
-                          {project.published && (
-                            <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
-                              Опубликован
-                            </span>
-                          )}
                         </div>
                         <div className="flex items-center gap-4 text-sm text-slate-600">
-                          <span>{project.pages} страниц</span>
-                          <span>Обновлен {project.updatedAt}</span>
+                          <span>{project.sections.length} секций</span>
+                          <span>Обновлен {formatDate(project.updatedAt)}</span>
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenProject(getProjectIdNumber(project.id));
+                        }}>
                           <Icon name="Edit" size={14} className="mr-1" />
                           Редактировать
                         </Button>
-                        <Button size="sm" variant="outline">
-                          <Icon name="Eye" size={14} />
+                        <Button size="sm" variant="outline" onClick={(e) => handleDuplicateProject(project.id, e)}>
+                          <Icon name="Copy" size={14} />
                         </Button>
-                        <Button size="sm" variant="outline">
-                          <Icon name="MoreVertical" size={14} />
+                        <Button size="sm" variant="outline" onClick={(e) => handleDeleteProject(project.id, e)}>
+                          <Icon name="Trash2" size={14} />
                         </Button>
                       </div>
                     </div>
                   </div>
-                ))}
+                ))
               </div>
             </CardContent>
           </Card>

@@ -16,9 +16,12 @@ import {
   getPreviewWidth
 } from './visual-editor/editorUtils';
 import { ecommerceTemplate } from '@/data/templates/ecommerce-template';
+import { projectStorage } from '@/utils/projectStorage';
+import { useToast } from '@/hooks/use-toast';
 
 const VisualEditor = () => {
   const location = useLocation();
+  const { toast } = useToast();
   const [view, setView] = useState<'projects' | 'editor'>('projects');
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
@@ -28,6 +31,8 @@ const VisualEditor = () => {
   const [showZeroEditor, setShowZeroEditor] = useState(false);
   const [sections, setSections] = useState(initialSections);
   const [editingText, setEditingText] = useState<{sectionId: string; field: string} | null>(null);
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [projectName, setProjectName] = useState<string>('Новый проект');
 
   const addNewSection = (blockType: string) => {
     const newSection = {
@@ -37,7 +42,9 @@ const VisualEditor = () => {
       content: getDefaultContent(blockType),
       styles: getDefaultStyles(blockType)
     };
-    setSections([...sections, newSection]);
+    const newSections = [...sections, newSection];
+    setSections(newSections);
+    autoSaveProject(newSections);
   };
 
   const addZeroBlock = (html: string, css: string, js: string) => {
@@ -48,7 +55,9 @@ const VisualEditor = () => {
       content: { html, css, js },
       styles: {}
     };
-    setSections([...sections, newSection]);
+    const newSections = [...sections, newSection];
+    setSections(newSections);
+    autoSaveProject(newSections);
   };
 
   const duplicateSection = (sectionId: string) => {
@@ -63,15 +72,18 @@ const VisualEditor = () => {
       const newSections = [...sections];
       newSections.splice(index + 1, 0, newSection);
       setSections(newSections);
+      autoSaveProject(newSections);
     }
   };
 
   const deleteSection = (sectionId: string) => {
     if (confirm('Удалить эту секцию?')) {
-      setSections(sections.filter(s => s.id !== sectionId));
+      const newSections = sections.filter(s => s.id !== sectionId);
+      setSections(newSections);
       if (selectedElement === sectionId) {
         setSelectedElement(null);
       }
+      autoSaveProject(newSections);
     }
   };
 
@@ -83,15 +95,17 @@ const VisualEditor = () => {
       const newSections = [...sections];
       [newSections[index], newSections[index - 1]] = [newSections[index - 1], newSections[index]];
       setSections(newSections);
+      autoSaveProject(newSections);
     } else if (direction === 'down' && index < sections.length - 1) {
       const newSections = [...sections];
       [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]];
       setSections(newSections);
+      autoSaveProject(newSections);
     }
   };
 
   const updateSectionContent = (sectionId: string, field: string, value: any) => {
-    setSections(sections.map(section => {
+    const newSections = sections.map(section => {
       if (section.id === sectionId) {
         return {
           ...section,
@@ -102,11 +116,13 @@ const VisualEditor = () => {
         };
       }
       return section;
-    }));
+    });
+    setSections(newSections);
+    autoSaveProject(newSections);
   };
 
   const updateSectionStyles = (sectionId: string, styles: any) => {
-    setSections(sections.map(section => {
+    const newSections = sections.map(section => {
       if (section.id === sectionId) {
         return {
           ...section,
@@ -117,12 +133,42 @@ const VisualEditor = () => {
         };
       }
       return section;
-    }));
+    });
+    setSections(newSections);
+    autoSaveProject(newSections);
+  };
+
+  const autoSaveProject = (updatedSections: any[]) => {
+    if (currentProjectId) {
+      projectStorage.autoSave(currentProjectId, updatedSections);
+    }
   };
 
   const saveTemplate = (templateName: string) => {
-    console.log('Сохранение шаблона:', templateName, sections);
-    alert(`Шаблон "${templateName}" сохранен!`);
+    if (currentProjectId) {
+      const project = projectStorage.getProject(currentProjectId);
+      if (project) {
+        projectStorage.saveProject({
+          ...project,
+          name: templateName,
+          sections
+        });
+        setProjectName(templateName);
+        toast({
+          title: 'Проект сохранён',
+          description: `Проект "${templateName}" успешно сохранён`,
+        });
+      }
+    } else {
+      const newProject = projectStorage.createNewProject(templateName, sections);
+      setCurrentProjectId(newProject.id);
+      setProjectName(templateName);
+      projectStorage.setCurrentProject(newProject.id);
+      toast({
+        title: 'Проект создан',
+        description: `Проект "${templateName}" успешно создан`,
+      });
+    }
     setShowSaveDialog(false);
   };
 
@@ -133,13 +179,23 @@ const VisualEditor = () => {
   };
 
   const handleOpenProject = (projectId: number) => {
-    console.log('Открытие проекта:', projectId);
-    setView('editor');
+    const projectIdStr = `project-${projectId}`;
+    const project = projectStorage.getProject(projectIdStr);
+    if (project) {
+      setSections(project.sections);
+      setCurrentProjectId(project.id);
+      setProjectName(project.name);
+      projectStorage.setCurrentProject(project.id);
+      setView('editor');
+    }
   };
 
   const handleCreateProject = () => {
-    console.log('Создание нового проекта');
-    setSections(initialSections);
+    const newProject = projectStorage.createNewProject('Новый проект', initialSections);
+    setSections(newProject.sections);
+    setCurrentProjectId(newProject.id);
+    setProjectName(newProject.name);
+    projectStorage.setCurrentProject(newProject.id);
     setView('editor');
   };
 
@@ -148,22 +204,41 @@ const VisualEditor = () => {
     if (state?.templateId) {
       console.log('Загрузка шаблона:', state.templateName);
       
+      let templateSections = initialSections;
       if (state.templateId === 'ecommerce-pro') {
-        const templateSections = ecommerceTemplate.sections.map(section => ({
+        templateSections = ecommerceTemplate.sections.map(section => ({
           id: section.id,
           type: section.type,
           name: section.name,
           content: section.content,
           styles: section.styles
         }));
-        setSections(templateSections);
-      } else {
-        setSections(initialSections);
       }
       
+      const newProject = projectStorage.createNewProject(
+        state.templateName || 'Новый проект',
+        templateSections
+      );
+      setSections(templateSections);
+      setCurrentProjectId(newProject.id);
+      setProjectName(newProject.name);
+      projectStorage.setCurrentProject(newProject.id);
       setView('editor');
     }
   }, [location.state]);
+
+  useEffect(() => {
+    const savedProjectId = projectStorage.getCurrentProjectId();
+    if (savedProjectId) {
+      const project = projectStorage.getProject(savedProjectId);
+      if (project) {
+        setSections(project.sections);
+        setCurrentProjectId(project.id);
+        setProjectName(project.name);
+        setView('editor');
+      }
+    }
+  }, []);
 
   if (view === 'projects') {
     return (
@@ -181,6 +256,7 @@ const VisualEditor = () => {
         onPreviewModeChange={setPreviewMode}
         onShowTemplates={() => setShowTemplatesDialog(true)}
         onSave={() => setShowSaveDialog(true)}
+        projectName={projectName}
       />
 
       <div className="flex-1 flex overflow-hidden">

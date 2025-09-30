@@ -6,13 +6,15 @@ interface EditorToolbarProps {
   onPreviewModeChange: (mode: 'desktop' | 'tablet' | 'mobile') => void;
   onShowTemplates: () => void;
   onSave: () => void;
+  projectName?: string;
 }
 
 const EditorToolbar = ({
   previewMode,
   onPreviewModeChange,
   onShowTemplates,
-  onSave
+  onSave,
+  projectName = 'Визуальный редактор'
 }: EditorToolbarProps) => {
   return (
     <div className="bg-white border-b px-4 py-3 flex items-center justify-between">
@@ -22,7 +24,14 @@ const EditorToolbar = ({
           Назад
         </Button>
         <div className="h-6 w-px bg-gray-300" />
-        <h1 className="font-semibold text-slate-800">Визуальный редактор</h1>
+        <div className="flex items-center gap-2">
+          <Icon name="Layout" size={20} className="text-primary" />
+          <h1 className="font-semibold text-slate-800">{projectName}</h1>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-slate-500 bg-green-50 px-2 py-1 rounded">
+          <Icon name="Check" size={12} className="text-green-600" />
+          <span>Автосохранение</span>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
