@@ -1,0 +1,30 @@
+{
+  "tests": [
+    {
+      "name": "Get weekly analytics",
+      "method": "GET",
+      "path": "/?period=week",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "period": "week",
+        "stats": {
+          "totalRevenue": 139000
+        }
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get monthly analytics default",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "period": "month",
+        "stats": {
+          "totalRevenue": 360000
+        }
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

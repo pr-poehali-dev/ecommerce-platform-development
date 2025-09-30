@@ -1,50 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
 const SalesAnalytics = () => {
   const [period, setPeriod] = useState<'week' | 'month' | 'year'>('month');
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
 
-  const salesData = {
-    week: {
-      labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-      revenue: [12000, 19000, 15000, 22000, 18000, 25000, 28000],
-      orders: [8, 12, 10, 15, 11, 18, 20]
-    },
-    month: {
-      labels: ['Нед 1', 'Нед 2', 'Нед 3', 'Нед 4'],
-      revenue: [85000, 92000, 78000, 105000],
-      orders: [54, 62, 48, 70]
-    },
-    year: {
-      labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-      revenue: [320000, 350000, 380000, 420000, 450000, 480000, 520000, 490000, 510000, 540000, 580000, 620000],
-      orders: [210, 230, 250, 280, 290, 310, 340, 320, 330, 350, 380, 410]
+  useEffect(() => {
+    fetchAnalytics();
+  }, [period]);
+
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://functions.poehali.dev/a3d1c7d9-d576-4e93-b98b-3a5891d94cca?period=${period}`
+      );
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const currentData = salesData[period];
+  if (loading || !data) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <Icon name="Loader2" size={48} className="animate-spin text-primary mx-auto mb-4" />
+          <p className="text-slate-600">Загрузка аналитики...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentData = data.charts;
+  const stats = data.stats;
   const maxRevenue = Math.max(...currentData.revenue);
-  const totalRevenue = currentData.revenue.reduce((a, b) => a + b, 0);
-  const totalOrders = currentData.orders.reduce((a, b) => a + b, 0);
-  const avgOrderValue = Math.round(totalRevenue / totalOrders);
-
-  const topProducts = [
-    { name: 'Шар фольгированный "Сердце"', sales: 234, revenue: 35100 },
-    { name: 'Набор "День рождения"', sales: 189, revenue: 168210 },
-    { name: 'Цифра 5 большая', sales: 156, revenue: 101400 },
-    { name: 'Букет из шаров "Радуга"', sales: 134, revenue: 120600 },
-    { name: 'Шар с гелием обычный', sales: 112, revenue: 16800 }
-  ];
-
-  const recentOrders = [
-    { id: '#2847', customer: 'Анна Петрова', amount: 1250, status: 'completed', date: '30.09.2024' },
-    { id: '#2846', customer: 'Иван Сидоров', amount: 890, status: 'processing', date: '30.09.2024' },
-    { id: '#2845', customer: 'Мария Иванова', amount: 2340, status: 'completed', date: '29.09.2024' },
-    { id: '#2844', customer: 'Петр Козлов', amount: 650, status: 'completed', date: '29.09.2024' },
-    { id: '#2843', customer: 'Ольга Смирнова', amount: 1780, status: 'cancelled', date: '28.09.2024' }
-  ];
+  const topProducts = data.topProducts;
+  const recentOrders = data.recentOrders;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -91,10 +89,10 @@ const SalesAnalytics = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600 mb-1">Выручка</p>
-                <p className="text-2xl font-bold text-slate-800">{totalRevenue.toLocaleString()} ₽</p>
+                <p className="text-2xl font-bold text-slate-800">{stats.totalRevenue.toLocaleString()} ₽</p>
                 <p className="text-xs text-green-600 mt-2 flex items-center">
                   <Icon name="TrendingUp" size={12} className="mr-1" />
-                  +12.5% к предыдущему периоду
+                  +{stats.revenueGrowth}% к предыдущему периоду
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -109,10 +107,10 @@ const SalesAnalytics = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600 mb-1">Заказы</p>
-                <p className="text-2xl font-bold text-slate-800">{totalOrders}</p>
+                <p className="text-2xl font-bold text-slate-800">{stats.totalOrders}</p>
                 <p className="text-xs text-green-600 mt-2 flex items-center">
                   <Icon name="TrendingUp" size={12} className="mr-1" />
-                  +8.3% к предыдущему периоду
+                  +{stats.ordersGrowth}% к предыдущему периоду
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
@@ -127,10 +125,10 @@ const SalesAnalytics = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600 mb-1">Средний чек</p>
-                <p className="text-2xl font-bold text-slate-800">{avgOrderValue.toLocaleString()} ₽</p>
+                <p className="text-2xl font-bold text-slate-800">{stats.avgOrderValue.toLocaleString()} ₽</p>
                 <p className="text-xs text-green-600 mt-2 flex items-center">
                   <Icon name="TrendingUp" size={12} className="mr-1" />
-                  +4.1% к предыдущему периоду
+                  +{stats.avgOrderGrowth}% к предыдущему периоду
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
@@ -145,10 +143,10 @@ const SalesAnalytics = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600 mb-1">Конверсия</p>
-                <p className="text-2xl font-bold text-slate-800">3.2%</p>
-                <p className="text-xs text-red-600 mt-2 flex items-center">
-                  <Icon name="TrendingDown" size={12} className="mr-1" />
-                  -1.2% к предыдущему периоду
+                <p className="text-2xl font-bold text-slate-800">{stats.conversion}%</p>
+                <p className={`text-xs mt-2 flex items-center ${stats.conversionGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <Icon name={stats.conversionGrowth >= 0 ? 'TrendingUp' : 'TrendingDown'} size={12} className="mr-1" />
+                  {stats.conversionGrowth >= 0 ? '+' : ''}{stats.conversionGrowth}% к предыдущему периоду
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
