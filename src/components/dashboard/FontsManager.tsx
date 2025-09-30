@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
+import { saveFontConfig, loadFontConfig, getGoogleFontsLink, LIBRARY_FONTS as LIB_FONTS } from '@/utils/fontManager';
 
 interface Font {
   id: string;
@@ -7,27 +8,11 @@ interface Font {
   preview: string;
 }
 
-const LIBRARY_FONTS: Font[] = [
-  { id: 'Inter', name: 'Inter', preview: 'АаБбВв 123' },
-  { id: 'Roboto', name: 'Roboto', preview: 'АаБбВв 123' },
-  { id: 'Open Sans', name: 'Open Sans', preview: 'АаБбВв 123' },
-  { id: 'Montserrat', name: 'Montserrat', preview: 'АаБбВв 123' },
-  { id: 'PT Sans', name: 'PT Sans', preview: 'АаБбВв 123' },
-  { id: 'PT Serif', name: 'PT Serif', preview: 'АаБбВв 123' },
-  { id: 'Playfair Display', name: 'Playfair Display', preview: 'АаБбВв 123' },
-  { id: 'Raleway', name: 'Raleway', preview: 'АаБбВв 123' },
-  { id: 'Manrope', name: 'Manrope', preview: 'АаБбВв 123' },
-  { id: 'Ubuntu', name: 'Ubuntu', preview: 'АаБбВв 123' },
-  { id: 'Noto Sans', name: 'Noto Sans', preview: 'АаБбВв 123' },
-  { id: 'Noto Serif', name: 'Noto Serif', preview: 'АаБбВв 123' },
-  { id: 'Oswald', name: 'Oswald', preview: 'АаБбВв 123' },
-  { id: 'Cormorant', name: 'Cormorant', preview: 'АаБбВв 123' },
-  { id: 'Rubik', name: 'Rubik', preview: 'АаБбВв 123' },
-  { id: 'Comfortaa', name: 'Comfortaa', preview: 'АаБбВв 123' },
-  { id: 'Arial', name: 'Arial', preview: 'АаБбВв 123' },
-  { id: 'Georgia', name: 'Georgia', preview: 'АаБбВв 123' },
-  { id: 'Times New Roman', name: 'Times New Roman', preview: 'АаБбВв 123' }
-];
+const LIBRARY_FONTS: Font[] = LIB_FONTS.map(font => ({
+  id: font,
+  name: font,
+  preview: 'АаБбВв 123'
+}));
 
 const FontsManager = () => {
   const [activeTab, setActiveTab] = useState<'library' | 'google' | 'upload'>('google');
@@ -42,29 +27,54 @@ const FontsManager = () => {
   const [showHeadlineDropdown, setShowHeadlineDropdown] = useState(false);
   const [showTextDropdown, setShowTextDropdown] = useState(false);
 
+  useEffect(() => {
+    const config = loadFontConfig();
+    if (config) {
+      setActiveTab(config.source);
+      if (config.source === 'library') {
+        setHeadlineFont(config.headlineFont);
+        setTextFont(config.textFont);
+      } else if (config.source === 'google') {
+        setGoogleCssLink(config.cssLink || '');
+        setGoogleHeadlineFont(config.headlineFont);
+        setGoogleTextFont(config.textFont);
+      } else if (config.source === 'custom') {
+        setUploadCssLink(config.cssLink || '');
+        setUploadHeadlineFont(config.headlineFont);
+        setUploadTextFont(config.textFont);
+      }
+    }
+  }, []);
+
   const handleSave = () => {
     let fontConfig;
     
     if (activeTab === 'library') {
-      fontConfig = { headlineFont, textFont, source: 'library' };
+      const cssLink = getGoogleFontsLink([headlineFont, textFont]);
+      fontConfig = { 
+        headlineFont, 
+        textFont, 
+        cssLink,
+        source: 'library' as const
+      };
     } else if (activeTab === 'google') {
       fontConfig = { 
         cssLink: googleCssLink, 
         headlineFont: googleHeadlineFont, 
         textFont: googleTextFont,
-        source: 'google'
+        source: 'google' as const
       };
     } else {
       fontConfig = { 
         cssLink: uploadCssLink, 
         headlineFont: uploadHeadlineFont, 
         textFont: uploadTextFont,
-        source: 'custom'
+        source: 'custom' as const
       };
     }
 
-    console.log('Сохранение шрифтов:', fontConfig);
-    alert('Шрифты успешно применены!');
+    saveFontConfig(fontConfig);
+    alert('Шрифты успешно применены! Обновите страницу, чтобы увидеть изменения.');
   };
 
   return (
