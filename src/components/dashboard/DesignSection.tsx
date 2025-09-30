@@ -195,12 +195,89 @@ const DesignSection = () => {
 
       {/* Preloader tab content */}
       {activeTab === 'preloader' && (
-        <Card>
-          <CardContent className="p-12 text-center text-slate-500">
-            <Icon name="Loader2" size={48} className="mx-auto mb-4 opacity-50 animate-spin" />
-            <p>Раздел "Прелоадер" в разработке</p>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-3 text-sm text-slate-600 mb-6">
+                <Icon name="Info" size={20} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                <p>
+                  Прелоадер — это анимация загрузки, которая отображается посетителям во время загрузки страниц магазина. 
+                  Вы можете включить или отключить прелоадер, а также настроить его внешний вид.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Enable/Disable preloader */}
+                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                  <div>
+                    <h3 className="font-medium text-slate-800">Показывать прелоадер</h3>
+                    <p className="text-sm text-slate-600 mt-1">Включить анимацию загрузки страниц</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" defaultChecked />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+
+                {/* Preloader style selection */}
+                <div>
+                  <h3 className="font-medium text-slate-800 mb-4">Стиль прелоадера</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { id: 'spinner', name: 'Спиннер', icon: 'Loader2' },
+                      { id: 'dots', name: 'Точки', icon: 'MoreHorizontal' },
+                      { id: 'pulse', name: 'Пульсация', icon: 'Circle' }
+                    ].map(style => (
+                      <Card 
+                        key={style.id} 
+                        className="cursor-pointer hover:shadow-md transition-all border-2 hover:border-primary"
+                      >
+                        <CardContent className="p-6 text-center">
+                          <Icon name={style.icon as any} size={32} className="mx-auto mb-3 text-primary" />
+                          <p className="font-medium text-slate-800">{style.name}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Color settings */}
+                <div>
+                  <h3 className="font-medium text-slate-800 mb-4">Цвет прелоадера</h3>
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="color" 
+                      defaultValue="#3b82f6"
+                      className="w-16 h-16 rounded-lg cursor-pointer border-2 border-gray-200"
+                    />
+                    <div>
+                      <p className="text-sm text-slate-600">Выберите цвет анимации загрузки</p>
+                      <p className="text-xs text-slate-400 mt-1">По умолчанию используется основной цвет темы</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save button */}
+                <div className="flex justify-end pt-4">
+                  <Button className="px-8">
+                    <Icon name="Save" size={18} className="mr-2" />
+                    Сохранить настройки
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Preview card */}
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="font-medium text-slate-800 mb-4">Предпросмотр</h3>
+              <div className="bg-slate-100 rounded-lg h-64 flex items-center justify-center">
+                <Icon name="Loader2" size={48} className="text-primary animate-spin" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );
