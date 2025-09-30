@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
+import CategoriesManager from './CategoriesManager';
 
 const ProductsSection = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -261,50 +262,7 @@ const ProductsSection = () => {
       )}
 
       {/* Categories tab */}
-      {activeTab === 'categories' && (
-        <div className="space-y-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3 text-sm text-slate-600 mb-6">
-                <Icon name="Info" size={20} className="text-blue-500 flex-shrink-0 mt-0.5" />
-                <p>
-                  Создайте структуру категорий для удобной навигации по товарам. Можно создавать подкатегории любого уровня вложенности.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {categories.map(category => (
-                  <div key={category.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <Icon name={category.icon as any} size={20} className="text-slate-600" />
-                      <div>
-                        <h3 className="font-medium text-slate-800">{category.name}</h3>
-                        <p className="text-sm text-slate-500">{category.count} товаров</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Icon name="Edit" size={16} />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Icon name="Plus" size={16} />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Icon name="Trash2" size={16} className="text-red-600" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <Button className="mt-6 w-full">
-                <Icon name="Plus" size={18} className="mr-2" />
-                Добавить категорию
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {activeTab === 'categories' && <CategoriesManager />}
 
       {/* Attributes tab */}
       {activeTab === 'attributes' && (
