@@ -245,7 +245,7 @@ const ProjectsManager = ({ onOpenProject, onCreateProject }: ProjectsManagerProp
                       </div>
                     </div>
                   </div>
-                ))
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -266,5 +266,7 @@ const ProjectsManager = ({ onOpenProject, onCreateProject }: ProjectsManagerProp
     </div>
   );
 };
+
+export default ProjectsManager;
 
 export default ProjectsManager;
