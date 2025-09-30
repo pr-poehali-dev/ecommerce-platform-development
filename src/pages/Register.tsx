@@ -6,10 +6,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,19 +32,39 @@ const Login = () => {
               <Icon name="Layers" className="text-white" size={32} />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">С возвращением!</h1>
-          <p className="text-foreground/60">Войдите в свой аккаунт</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Создайте аккаунт</h1>
+          <p className="text-foreground/60">Начните создавать сайты бесплатно</p>
         </div>
 
         <Card className="shadow-2xl border-2 bg-white/90 backdrop-blur-sm">
           <form onSubmit={handleSubmit}>
             <CardHeader>
-              <CardTitle className="text-2xl">Вход в систему</CardTitle>
-              <CardDescription>Введите данные для доступа к панели управления</CardDescription>
+              <CardTitle className="text-2xl">Регистрация</CardTitle>
+              <CardDescription>Заполните форму для создания аккаунта</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email или логин</Label>
+                <Label htmlFor="name">Имя</Label>
+                <div className="relative">
+                  <Icon 
+                    name="User" 
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" 
+                    size={18} 
+                  />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Иван Петров"
+                    className="pl-10 h-12"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Icon 
                     name="Mail" 
@@ -49,15 +73,16 @@ const Login = () => {
                   />
                   <Input
                     id="email"
-                    type="text"
+                    type="email"
                     placeholder="ivan@example.com"
                     className="pl-10 h-12"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
                     required
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password">Пароль</Label>
                 <div className="relative">
@@ -69,38 +94,59 @@ const Login = () => {
                   <Input
                     id="password"
                     type="password"
+                    placeholder="Минимум 8 символов"
+                    className="pl-10 h-12"
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    required
+                    minLength={8}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Повторите пароль</Label>
+                <div className="relative">
+                  <Icon 
+                    name="Lock" 
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" 
+                    size={18} 
+                  />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
                     placeholder="••••••••"
                     className="pl-10 h-12"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                     required
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                  />
-                  <span className="text-foreground/70">Запомнить меня</span>
+
+              <div className="flex items-start gap-2 pt-2">
+                <input 
+                  type="checkbox" 
+                  id="terms"
+                  className="w-4 h-4 mt-1 rounded border-border text-primary focus:ring-primary"
+                  required
+                />
+                <label htmlFor="terms" className="text-sm text-foreground/70">
+                  Я согласен с{' '}
+                  <a href="#" className="text-primary hover:underline">
+                    Пользовательским соглашением
+                  </a>
+                  {' '}и{' '}
+                  <a href="#" className="text-primary hover:underline">
+                    Политикой конфиденциальности
+                  </a>
                 </label>
-                <a 
-                  href="#" 
-                  className="text-primary hover:underline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate('/forgot-password');
-                  }}
-                >
-                  Забыли пароль?
-                </a>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <Button type="submit" className="w-full h-12 text-base" size="lg">
-                <Icon name="LogIn" size={20} className="mr-2" />
-                Войти
+                <Icon name="UserPlus" size={20} className="mr-2" />
+                Создать аккаунт
               </Button>
               
               <div className="relative w-full">
@@ -108,7 +154,7 @@ const Login = () => {
                   <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-foreground/60">или</span>
+                  <span className="bg-white px-2 text-foreground/60">или зарегистрируйтесь через</span>
                 </div>
               </div>
 
@@ -136,16 +182,16 @@ const Login = () => {
               </div>
 
               <p className="text-center text-sm text-foreground/60">
-                Нет аккаунта?{' '}
+                Уже есть аккаунт?{' '}
                 <a 
                   href="#" 
                   className="text-primary hover:underline font-semibold"
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate('/register');
+                    navigate('/login');
                   }}
                 >
-                  Создать бесплатно
+                  Войти
                 </a>
               </p>
             </CardFooter>
@@ -169,4 +215,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

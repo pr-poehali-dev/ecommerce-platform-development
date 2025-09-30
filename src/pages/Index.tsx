@@ -110,7 +110,7 @@ const Index = () => {
             <Button variant="ghost" onClick={() => navigate('/login')}>
               Войти
             </Button>
-            <Button onClick={() => navigate('/dashboard')}>
+            <Button onClick={() => navigate('/register')}>
               Начать бесплатно
             </Button>
           </div>
