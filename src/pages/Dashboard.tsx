@@ -4,6 +4,7 @@ import Header from '@/components/dashboard/Header';
 import GeneralSettings from '@/components/dashboard/GeneralSettings';
 import OrdersSection from '@/components/dashboard/OrdersSection';
 import ProductsSection from '@/components/dashboard/ProductsSection';
+import DesignSection from '@/components/dashboard/DesignSection';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -99,6 +100,8 @@ const Dashboard = () => {
         return <OrdersSection />;
       case 'products':
         return <ProductsSection />;
+      case 'templates':
+        return <DesignSection />;
       default:
         return <GeneralSettings />;
     }
