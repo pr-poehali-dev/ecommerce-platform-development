@@ -12,6 +12,7 @@ import ModulesManager from '@/components/dashboard/ModulesManager';
 import NewsModule from '@/components/dashboard/modules/NewsModule';
 import FormsModule from '@/components/dashboard/modules/FormsModule';
 import GalleryModule from '@/components/dashboard/modules/GalleryModule';
+import FontsManager from '@/components/dashboard/FontsManager';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -48,6 +49,7 @@ const Dashboard = () => {
       icon: 'Palette',
       items: [
         { id: 'templates', label: 'Варианты оформления', icon: 'Layout' },
+        { id: 'fonts', label: 'Шрифты', icon: 'Type' },
         { id: 'images', label: 'Изображения', icon: 'Image' },
         { id: 'editor', label: 'Визуальный редактор', icon: 'Edit' }
       ]
@@ -116,6 +118,8 @@ const Dashboard = () => {
         return <ProductsSection />;
       case 'templates':
         return <DesignSection />;
+      case 'fonts':
+        return <FontsManager />;
       case 'shop-settings':
         return <ShopSettings />;
       case 'modules-all':
