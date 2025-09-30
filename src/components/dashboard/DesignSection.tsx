@@ -44,9 +44,18 @@ const DesignSection = () => {
 
   return (
     <div className="max-w-7xl">
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-slate-800 mb-2">Оформление</h2>
-        <p className="text-slate-600">Выбор и настройка дизайна магазина</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-800 mb-2">Оформление</h2>
+          <p className="text-slate-600">Выбор и настройка дизайна магазина</p>
+        </div>
+        <Button 
+          onClick={() => window.open('#visual-editor', '_blank')}
+          className="flex items-center gap-2"
+        >
+          <Icon name="Edit" size={18} />
+          Визуальный редактор
+        </Button>
       </div>
 
       {/* Horizontal tabs menu */}
