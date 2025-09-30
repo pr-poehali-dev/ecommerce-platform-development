@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
 import CategoriesManager from './CategoriesManager';
+import ImportExportManager from './ImportExportManager';
 
 const ProductsSection = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -317,61 +318,7 @@ const ProductsSection = () => {
       )}
 
       {/* Import tab */}
-      {activeTab === 'import' && (
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start gap-3 text-sm text-slate-600 mb-6">
-              <Icon name="Info" size={20} className="text-blue-500 flex-shrink-0 mt-0.5" />
-              <p>
-                Импортируйте товары из файла Excel или CSV. Скачайте шаблон, заполните его и загрузите обратно.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-6 bg-blue-50 border-2 border-blue-200 border-dashed rounded-lg text-center">
-                <Icon name="Upload" size={48} className="mx-auto mb-4 text-blue-500" />
-                <h3 className="font-medium text-slate-800 mb-2">Загрузите файл с товарами</h3>
-                <p className="text-sm text-slate-600 mb-4">Поддерживаются форматы: XLSX, CSV</p>
-                <Button>
-                  <Icon name="Upload" size={18} className="mr-2" />
-                  Выбрать файл
-                </Button>
-              </div>
-
-              <div className="border-t pt-6">
-                <h3 className="font-medium text-slate-800 mb-4">Шаблоны для импорта</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
-                    <Icon name="FileSpreadsheet" size={32} className="text-green-600" />
-                    <span className="font-medium">Скачать шаблон Excel</span>
-                    <span className="text-xs text-slate-500">Файл .xlsx с примерами</span>
-                  </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2">
-                    <Icon name="FileText" size={32} className="text-blue-600" />
-                    <span className="font-medium">Скачать шаблон CSV</span>
-                    <span className="text-xs text-slate-500">Файл .csv с примерами</span>
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <Icon name="AlertTriangle" size={20} className="text-amber-700 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-amber-800">
-                    <p className="font-medium mb-1">Важно перед импортом:</p>
-                    <ul className="list-disc list-inside space-y-1 text-xs">
-                      <li>Убедитесь, что все обязательные поля заполнены</li>
-                      <li>Цены указывайте без валюты, только числа</li>
-                      <li>Изображения можно загрузить по URL или после импорта</li>
-                      <li>При совпадении артикулов товары будут обновлены</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {activeTab === 'import' && <ImportExportManager />}
 
       {/* Export tab */}
       {activeTab === 'export' && (
