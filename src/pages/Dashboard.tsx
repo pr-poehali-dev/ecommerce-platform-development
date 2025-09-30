@@ -6,6 +6,7 @@ import OrdersSection from '@/components/dashboard/OrdersSection';
 import ProductsSection from '@/components/dashboard/ProductsSection';
 import DesignSection from '@/components/dashboard/DesignSection';
 import ShopSettings from '@/components/dashboard/ShopSettings';
+import ShopModule from '@/components/dashboard/ShopModule';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -50,6 +51,7 @@ const Dashboard = () => {
       title: 'Мой магазин',
       icon: 'ShoppingCart',
       items: [
+        { id: 'shop-module', label: 'Интернет-магазин', icon: 'ShoppingCart' },
         { id: 'categories', label: 'Разделы каталога', icon: 'List' },
         { id: 'products', label: 'Товары', icon: 'Package' },
         { id: 'orders', label: 'Заказы', icon: 'ShoppingBag' },
@@ -97,6 +99,8 @@ const Dashboard = () => {
     switch (activeSection) {
       case 'general':
         return <GeneralSettings />;
+      case 'shop-module':
+        return <ShopModule onNavigate={setActiveSection} />;
       case 'orders':
         return <OrdersSection />;
       case 'products':
