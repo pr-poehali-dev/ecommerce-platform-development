@@ -46,6 +46,49 @@ const FontsManager = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fonts = [getCurrentHeadlineFont(), getCurrentTextFont()].filter(Boolean);
+    if (fonts.length === 0) return;
+
+    const cssLink = activeTab === 'library' 
+      ? getGoogleFontsLink(fonts)
+      : activeTab === 'google' 
+        ? googleCssLink 
+        : uploadCssLink;
+
+    if (!cssLink) return;
+
+    const existingLink = document.getElementById('preview-font-link');
+    if (existingLink) {
+      existingLink.remove();
+    }
+
+    const link = document.createElement('link');
+    link.id = 'preview-font-link';
+    link.rel = 'stylesheet';
+    link.href = cssLink;
+    document.head.appendChild(link);
+
+    return () => {
+      const linkToRemove = document.getElementById('preview-font-link');
+      if (linkToRemove) {
+        linkToRemove.remove();
+      }
+    };
+  }, [activeTab, headlineFont, textFont, googleHeadlineFont, googleTextFont, googleCssLink, uploadHeadlineFont, uploadTextFont, uploadCssLink]);
+
+  const getCurrentHeadlineFont = () => {
+    if (activeTab === 'library') return headlineFont;
+    if (activeTab === 'google') return googleHeadlineFont;
+    return uploadHeadlineFont;
+  };
+
+  const getCurrentTextFont = () => {
+    if (activeTab === 'library') return textFont;
+    if (activeTab === 'google') return googleTextFont;
+    return uploadTextFont;
+  };
+
   const handleSave = () => {
     let fontConfig;
     
@@ -322,7 +365,65 @@ const FontsManager = () => {
           </div>
         )}
 
-        <div className="mt-8 flex justify-end gap-3">
+        <div className="mt-8 border-t border-gray-200 pt-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Предпросмотр</h3>
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-8 space-y-6">
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Шрифт для заголовков: {getCurrentHeadlineFont()}</p>
+              <h1 
+                className="text-4xl font-bold text-gray-900 mb-2"
+                style={{ fontFamily: `"${getCurrentHeadlineFont()}", sans-serif` }}
+              >
+                Великолепный заголовок
+              </h1>
+              <h2 
+                className="text-3xl font-semibold text-gray-800 mb-2"
+                style={{ fontFamily: `"${getCurrentHeadlineFont()}", sans-serif` }}
+              >
+                Подзаголовок второго уровня
+              </h2>
+              <h3 
+                className="text-2xl font-medium text-gray-700"
+                style={{ fontFamily: `"${getCurrentHeadlineFont()}", sans-serif` }}
+              >
+                Подзаголовок третьего уровня
+              </h3>
+            </div>
+
+            <div className="border-t border-gray-300 pt-4">
+              <p className="text-xs text-gray-500 mb-2">Шрифт для текста: {getCurrentTextFont()}</p>
+              <p 
+                className="text-base text-gray-700 leading-relaxed mb-3"
+                style={{ fontFamily: `"${getCurrentTextFont()}", sans-serif` }}
+              >
+                Это пример обычного текста. Здесь вы можете увидеть, как будет выглядеть основной контент вашего сайта с выбранным шрифтом. Важно, чтобы текст был читаемым и приятным для глаз посетителей.
+              </p>
+              <p 
+                className="text-sm text-gray-600"
+                style={{ fontFamily: `"${getCurrentTextFont()}", sans-serif` }}
+              >
+                АаБбВвГгДдЕеЁёЖжЗзИиЙй • 0123456789 • AaBbCcDdEeFfGg
+              </p>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button 
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                style={{ fontFamily: `"${getCurrentTextFont()}", sans-serif` }}
+              >
+                Кнопка с текстовым шрифтом
+              </button>
+              <button 
+                className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                style={{ fontFamily: `"${getCurrentHeadlineFont()}", sans-serif` }}
+              >
+                Кнопка с шрифтом заголовков
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3">
           <button className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
             Отмена
           </button>
