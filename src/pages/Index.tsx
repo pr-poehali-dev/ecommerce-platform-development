@@ -107,7 +107,7 @@ const Index = () => {
             <a href="#pricing" className="text-foreground/70 hover:text-foreground transition-colors">
               Тарифы
             </a>
-            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+            <Button variant="ghost" onClick={() => navigate('/login')}>
               Войти
             </Button>
             <Button onClick={() => navigate('/dashboard')}>
